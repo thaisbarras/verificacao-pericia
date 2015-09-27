@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+  <link rel="icon" href="http://s3.amazonaws.com/snaaakes-static/img/colophon/django.png">
+	
+
+    {% block title %}
+        <title>Verificacao e Pericia Metrologica</title>
+    {% endblock title %}
+
+  <style>
+    body {
+      padding-top: 70px;
+    }
+  </style>
+
+</head>
+
+<body>
+      
+  {% include "menu.html" %}
+
+  <div class="container">
+  <span class="label label-info">Usuario: {{ user }}</span>
+    {% block content %}
+	
+    {% endblock content %}
+  </div>
+
+  {% block javascript %}
+    <!-- Latest JQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  {% endblock javascript %}
+
+</body>
+</html>

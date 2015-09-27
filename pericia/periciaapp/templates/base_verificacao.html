@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+  <link rel="icon" href="http://s3.amazonaws.com/snaaakes-static/img/colophon/django.png">
+	
+
+    {% block title %}
+        <title>Verificacao e Pericia Metrologica</title>
+    {% endblock title %}
+
+  <style>
+    body {
+      padding-top: 70px;
+    }
+  </style>
+
+</head>
+
+<body>
+	{% include "menu.html" %}
+	<div class="container">
+  		<span class="label label-info">Usuario: {{ user }}</span>
+  		
+  		    <aside role="complementary" class="col-md-4 col-md-pull-0">
+    <div class="list-group">
+        <a href="#" class="list-group-item active">
+        
+            Cadastros
+        </a>
+       <p  class="list-group-item">
+            Administrativo&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/verificacoes/{{ nome.id }}"><span class="glyphicon glyphicon-search"></span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+             <a href="/verificacao_form_adm"><span class="glyphicon glyphicon-plus"></span></a>
+        </p>     
+        
+        <p  class="list-group-item">
+            Medidores&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/medidores/{{ nome.id }}"><span class="glyphicon glyphicon-search"></span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+             <a href="/verificacao_form_medidor"><span class="glyphicon glyphicon-plus"></span></a>
+        </p> 
+        <a href="#" class="list-group-item active">
+            Procedimentos de Verifica&ccedil;&atilde;o
+        </a>
+        <p  class="list-group-item">
+            Requisitos Administrativos&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/requisitosadm/{{ nome.id }}"><span class="glyphicon glyphicon-search"></span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+             <a href="/verificacao_requisitosadm"><span class="glyphicon glyphicon-plus"></span></a>
+        </p> 
+        <p  class="list-group-item">
+            Requisitos T&eacute;cnicos&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/requisitostecnicos/{{ nome.id }}"><span class="glyphicon glyphicon-search"></span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+             <a href="/verificacao_requisitostecnicos"><span class="glyphicon glyphicon-plus"></span></a>
+        </p> 	
+        <p  class="list-group-item">
+            Requisitos Metrol&oacute;gicos&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/requisitostecnicos/{{ nome.id }}"><span class="glyphicon glyphicon-search"></span></a>&nbsp;&nbsp;|&nbsp;&nbsp;
+             <a href="/verificacao_requisitosmetrologicos"><span class="glyphicon glyphicon-plus"></span></a>
+        </p> 
+    </div>
+	</aside>
+    		{% block content %}
+			{% endblock content %}
+	    
+    </div>
+  {% block javascript %}
+    <!-- Latest JQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  {% endblock javascript %}
+
+</body>
+</html>

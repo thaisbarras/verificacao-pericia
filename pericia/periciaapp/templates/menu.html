@@ -1,0 +1,33 @@
+
+<!-- Menu -->
+<div class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Home</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/pericias/ {{ item.id }}">Pericias</a></li>
+        <li><a href="/agendamentos/ {{ item.id }}">Agendamentos</a></li>
+        <li><a href="/verificacoes/ {{ item.id }}">Verifica&ccedil;&otilde;es</a></li>
+        <!-- <li><a href="/contact/{{ item.id }}">Contato</a></li> -->
+        
+        <!-- to resolve NoReverseMatch for 'admin' -->
+        <li><a href="/admin/{{ item.id }}">Login</a></li>
+        <!-- <li><a href="/protected/{{ item.id }}">Protected</a></li>-->
+        <!-- <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Criar<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+           <li><a href="/pericia_form/{{ item.id }}">Adicionar Per&iacute;cia</a></li>
+           <li><a href="/verificacao_form/{{ item.id }}">Adicionar Vericica&ccedil;&atilde;o</a></li>
+          </ul>
+        </li>-->
+      </ul>
+    </div>
+  </div>
+</div>
