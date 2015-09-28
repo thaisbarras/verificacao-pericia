@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Agendamentos</title>
+{% endblock title %}
+
+{% block content %}
+    <!-- search form -->
+    <form class="navbar-form navbar-right" action="." method="get">
+    	<button class="btn btn-large btn-primary" type="button" onclick="window.location.href='/add_agendamento/'">Agendar</button><br><br>
+        <input id="search_box" name="search_box" type="text" placeholder="Search..." class="form-control">
+        <button type="submit" class="btn btn-success form-control"><span class="glyphicon glyphicon-search"></span></button>
+    </form>
+
+    <h1>Agendamentos</h1>
+    
+    <table  class="table table-striped">
+	<tr>
+		<th>C&oacute;digo do Agendamentos</th>
+		<th>Usu&aacute;rio solicitante</th>
+		<th>Data da Retirada do Instrumento</th>
+		<th>Data da Visita do Cliente</th>
+		<th>Usuario Compareceu?</th>
+		<th>Observa&ccedil;&otilde;es</th>
+
+    </tr>
+{% for nome in object_list %}
+    <tr>
+        <td>{{ nome.codigo_agendamento }}</a></td>
+        <td>{{ nome.codigo_usuario }}</td>  
+        <td>{{ nome.data_retirada }}</td>
+        <td>{{ nome.data_visita_do_usuario }}</td>
+        <td>{{ nome.usuario_compareceu }}</td>
+        <td>{{ nome.observacoes }}</td>        
+    </tr>
+{% empty %}
+        <li>Sem itens na lista.</li>
+{% endfor %}
+</table>
+{% endblock content %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Pericias</title>
+{% endblock title %}
+
+{% block content %}
+    <!-- search form -->
+    <form class="navbar-form navbar-right" action="." method="get">
+   		<button class="btn btn-large btn-primary" type="button" onclick="window.location.href='/add_pericia'">Adicionar Per&iacute;cia</button><br><br>
+        <input id="search_box" name="search_box" type="text" placeholder="Search..." class="form-control">
+        <button type="submit" class="btn btn-success form-control"><span class="glyphicon glyphicon-search"></span></button>
+    </form>
+
+    <h1>Pericias</h1>
+    <!--  
+    {% for nome in object_list %}
+        <ul class="list-group">
+          <li class="list-group-item">
+            <span class="badge">{{ nome.get_verificacoes_count }}</span>
+            <h4><a href="/pericias/{{ nome.id }}">{{ nome.numero_pericia }}</a></h4>
+          </li>
+        </ul>
+     {% empty %}
+          <li>Sem itens na lista.</li>
+    {% endfor %}-->
+    
+    <table  class="table table-striped">
+	<tr>
+		<th>Numero da verificacao</th>
+		<th>data da Pericia</th>
+		<th>Deletar</th>
+    </tr>
+{% for nome in object_list %}
+    <tr>
+        <td><a href="/pericias/{{ nome.id }}">{{ nome.verificacao }}</a></td>
+        <td>{{ nome.data_pericia }}</td>        
+        <td><a href="/periciadel/{{ nome.id }}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+    </tr>
+{% empty %}
+        <li>Sem itens na lista.</li>
+{% endfor %}
+</table>
+{% endblock content %}

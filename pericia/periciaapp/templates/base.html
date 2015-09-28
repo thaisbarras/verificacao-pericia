@@ -5,10 +5,11 @@
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	{% load bootstrap3 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
 
-  <link rel="icon" href="http://s3.amazonaws.com/snaaakes-static/img/colophon/django.png">
+	<link rel="icon" href="http://s3.amazonaws.com/snaaakes-static/img/colophon/django.png">
 	
 
     {% block title %}
@@ -28,6 +29,7 @@
   {% include "menu.html" %}
 
   <div class="container">
+	
   <span class="label label-info">Usuario: {{ user }}</span>
     {% block content %}
 	

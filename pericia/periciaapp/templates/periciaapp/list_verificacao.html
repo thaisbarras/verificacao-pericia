@@ -1,0 +1,53 @@
+{% extends "base_verificacao.html" %}
+
+{% block title %}
+    <title>Verificacoes</title>
+{% endblock title %}
+
+{% block content %}
+    <!-- search form 
+    <form class="navbar-form navbar-right" action="." method="get">
+    	<button class="btn btn-large btn-primary" type="button" onclick="window.location.href='/verificacao_form_adm/'">Adicionar Verifica&ccedil;&atilde;o</button><br><br>
+        <input id="search_box" name="search_box" type="text" placeholder="Search..." class="form-control">
+        <button type="submit" class="btn btn-success form-control"><span class="glyphicon glyphicon-search"></span></button>
+    </form>-->
+    	 		
+    <h1>Verifica&ccedil;&otilde;es</h1>
+
+	<div class="table-responsive">
+	
+    <table  class="table table-striped">
+	<tr>
+		<th>Numero da verifica&ccedil;&atilde;o</th>
+		<th>data da Verifica&ccedil;&atilde;o</th>
+		<th>Data de recebimento (TOI)</th>
+		<th>Local</th>
+		<th>Temperatura</th>
+		<th>Usu&aacute;rio</th>
+		<th>Propriet&aacute;rio</th>
+		<th>Requerente</th>
+		<th>Tecnico</th>
+		<th>Equipamentos Utilizados</th>
+		<th>Atualizar</th>
+	</tr>
+{% for nome in object_list %}
+    <tr>
+        <td>{{ nome.processo }}</td>
+        <td>{{ nome.data_verificacao }}</td>  
+        <td>{{ nome.data_toi }} </td>
+        <td>{{ nome.local }}</td>
+        <td>{{ nome.temperatura_ambiente }}</td>
+        <td>{{ nome.usuario }}</td>
+        <td>{{ nome.proprietario }} </td>
+        <td>{{ nome.requerente }}</td>
+        <td>{{ nome.tecnico_verificacao }}</td>
+        <td>{{ nome.equipamentos_utilizados }}</td>
+        <td align="center"><a href="/verificacoes/{{ nome.id }}"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a></td>
+    </tr>
+{% empty %}
+        <li>Sem itens na lista.</li>
+{% endfor %}
+</table>
+<div class="table-responsive">
+
+{% endblock content %}
