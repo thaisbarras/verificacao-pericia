@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 from . import views
-from periciaapp.views import ListaPericia, ListaVerificacao, ListaAgendamento,\
-    AddPericia, AddAgendamento, AddVerificacaoAdm, AddVerificacaoMedidor, AddVerificacaoRequisitosAdm, AddVerificacaoRequisitosTecnicos, AddVerificacaoRequisitosMetrologicos
+from .views import ListaPericia, ListaVerificacao, ListaAgendamento,\
+    AddPericia, AddAgendamento, AddVerificacaoAdm, AddVerificacaoMedidor, AddVerificacaoRequisitosAdm, AddVerificacaoRequisitosTecnicos, AddVerificacaoRequisitosMetrologicos, DetalheVerificacao
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -9,6 +9,7 @@ urlpatterns = [
     #----------- Listas ----------
     url(r'^pericias/$', ListaPericia.as_view(), name='lista_pericia'),  
     url(r'^verificacoes/$', ListaVerificacao.as_view(), name='lista_verificacao'),
+    url(r'^detalheveficicacao/$', DetalheVerificacao.as_view(), name='detalhe_verificacao'),
     url(r'^agendamentos/$', ListaAgendamento.as_view(), name='lista_agendamento'),
 
     #---------- Adicoes ----------

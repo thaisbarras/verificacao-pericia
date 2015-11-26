@@ -3,20 +3,18 @@
 {% load bootstrap3 %}
 
 {% block title %}
-    <title>Verificacao Form</title>
+    <title>Detalhes da Verifica&ccedil;&atilde;o</title>
 {% endblock title %}
 
-{% block content %}
-
-    <h1>Medidor</h1>
+{% block content %}    
     <form class="form col-sm-4" method="POST">
     	
         {% csrf_token %}
         {% bootstrap_form form %}
-        
         {% buttons %}
-            <button type="submit" class="btn btn-primary">Proximo >></button>
+            <button type="submit" class="btn btn-primary">Atualizar</button>
         {% endbuttons %}
     </form>
+
 
 {% endblock content %}

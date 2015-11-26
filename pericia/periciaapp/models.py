@@ -9,7 +9,13 @@ from _datetime import timezone, date
 from django.utils import timezone
 import datetime
 from itertools import repeat
+from django.conf.global_settings import FORCE_SCRIPT_NAME
+from django.utils.encoding import force_bytes, force_text
 
+STATE_CHOICES = (
+        (True, u'Sim'),
+        (False, u'Não'),
+    )
 
 class CadRequerente(models.Model):
     nome = models.CharField(max_length = 50)
@@ -95,17 +101,16 @@ class CadEquipamento(models.Model):#sistema da Messias
 
 
 class AgendamentoModel(models.Model):
-    codigo_agendamento = models.CharField(max_length = 10)
-    codigo_usuario = models.ForeignKey(CadUsuario)
-    data_retirada = models.DateTimeField(default=datetime.datetime.now())
-    data_visita_do_usuario = models.DateTimeField(default=datetime.datetime.now(), blank=True)
-    usuario_compareceu = models.CharField(choices=(
-            ('sim', 'sim'),
-            ('nao', 'nao'),
-            ),
-            max_length=50
+    codigo_agendamento = models.AutoField(primary_key=True)
+    codigo_do_usuario = models.ForeignKey(CadUsuario)
+    data_da_retirada = models.DateTimeField(default=timezone.now, verbose_name=u'Data que o equipamento foi retirado da casa do usuário',)
+    data_da_visita_do_usuario = models.DateTimeField(default=timezone.now, verbose_name=u'Data que o Usuário deve visitar o laboratório',)
+    usuario_compareceu = models.BooleanField(
+        verbose_name=u'Usuario compareceu no dia agendado?',
+        default=True,
+        choices=STATE_CHOICES,
     )
-    observacoes = models.CharField(max_length = 100)
+    observacoes = models.CharField(max_length = 100, blank=True, null=True)
 
     class Meta:
         ordering = ['codigo_agendamento']
@@ -113,16 +118,18 @@ class AgendamentoModel(models.Model):
         verbose_name_plural = 'agendamentos'
     
     def __str__(self):
-        return self.agendamento
-    
-    
+        return force_text(self.codigo_agendamento)
+     
+     
+     
+# ----------------------------------------- Verificações -----------------------------------------     
 class VerificacaoCadAdm(models.Model):
-    processo = models.CharField(max_length = 10)
-    data_verificacao = models.DateTimeField(default=timezone.now)
-    data_toi = models.DateTimeField(default=timezone.now, blank=True)
-    local = models.CharField(max_length = 100)
-    temperatura_ambiente = models.CharField(max_length = 10)   
-    usuario = models.ForeignKey(CadUsuario)
+    id_cad_administrativo = models.AutoField(primary_key=True)
+    codigo_agendamento = models.OneToOneField(AgendamentoModel)
+    data_verificacao = models.DateTimeField(default=timezone.now, verbose_name=u'Data da verificação')
+    data_toi = models.DateTimeField(default=timezone.now, blank=True, verbose_name=u'Data do TOI')
+    local = models.CharField(max_length = 100, verbose_name=u'Local da Realização da Verificação')
+    temperatura_ambiente = models.CharField(max_length = 10, verbose_name=u'Temperatura do Ambiente')   
     proprietario = models.ForeignKey(CadProprietario)
     requerente = models.CharField(choices=(
             ('usuario', 'usuario'),
@@ -130,33 +137,35 @@ class VerificacaoCadAdm(models.Model):
             ('orgao judicial', 'orgao judicial'),
             ('outros', 'outros'),
         ),
-        max_length=50
+        max_length=50, verbose_name=u'Requerente da Verificação'
     )
-    tecnico_verificacao = models.ForeignKey(CadTecnico, related_name='tecnico')
+    tecnico_verificacao = models.ForeignKey(CadTecnico, related_name='tecnico', verbose_name=u'Técnico que realizou a verificação')
     equipamentos_utilizados = models.ManyToManyField(CadEquipamento, related_name='equipamento')
      
     class Meta:
-        ordering = ['processo']
+        ordering = ['id_cad_administrativo']
         verbose_name = 'verificacaoadm'
         verbose_name_plural = 'verificacoesadm'
     
     def __str__(self):
-        return self.processo
+        return force_text(self.id_cad_administrativo)
+
 
 class VerificacaoCadMedidor(models.Model):
-    numero_do_processo = models.OneToOneField(VerificacaoCadAdm, primary_key=True)
+    id_cad_medidor = models.AutoField(primary_key=True)
+    cad_adm = models.OneToOneField(VerificacaoCadAdm, verbose_name=u'Código do cadastro Administrativo',)
     medidor = models.ForeignKey(CadMedidor, related_name='medidor')
     tipo_medidor = models.CharField(choices=(
             ('medidor_eletroeletronico', 'medidor_eletroeletronico'),
             ('medidor_eletromecanico', 'medidor_eletromecanico'),
         ),
-        max_length=30
+        max_length=30, verbose_name=u'Tipo do Medidor'
     )
     classe_do_medidor = models.CharField(max_length = 10)
-    numero_de_elementos = models.CharField(max_length = 10)
-    numero_de_fios = models.CharField(max_length = 10)
-    tensao_nominal = models.CharField(max_length = 10)
-    corrente_nominal_max_a = models.CharField(max_length = 10)
+    numero_de_elementos = models.CharField(max_length = 10, verbose_name=u'número de elementos', blank=True)
+    numero_de_fios = models.CharField(max_length = 10, verbose_name=u'número de fios', blank=True)
+    tensao_nominal = models.CharField(max_length = 10, verbose_name=u'tensão nominal', blank=True)
+    corrente_nominal_max_a = models.CharField(max_length = 10, verbose_name=u'corrente nominal máxima (A)', blank=True)
     frequencia_nominal = models.CharField(max_length = 10)
     constante = models.CharField(max_length = 10)
     ano_de_fabricante = models.CharField(max_length = 10)
@@ -171,31 +180,40 @@ class VerificacaoCadMedidor(models.Model):
         verbose_name_plural = 'cadmedidores'
         
     def __str__(self):
-        return self.medidor
+        return force_text(self.id_cad_medidor)
+    
     
 class VerificacaoRequisitosAdm(models.Model):
-    numero_do_processo = models.OneToOneField(VerificacaoCadAdm, primary_key=True)
-    involucro = models.BooleanField('possui involucro: ')
-    numero_involucro = models.CharField(max_length = 10, blank = True)
+    id_req_adm = models.AutoField(primary_key=True)
+    cad_med = models.OneToOneField(VerificacaoCadMedidor, verbose_name=u'Código do cadastro do medidor',)
+    involucro = models.BooleanField(
+        verbose_name=u'Possui Invólocro?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
+    numero_involucro = models.CharField(max_length = 10, blank = True, verbose_name=u'número do invóluvro',)
     condicao_involucro = models.CharField(choices=(
             ('conforme', 'conforme'),
             ('perfurado', 'perfurado'),
             ('lacre violado', 'lacre violado'),
             ('outros', 'outros'),
         ),
-        max_length=30
+        max_length=30, verbose_name=u'condição do Invólocro?',
     )
-    toi = models.BooleanField('possui toi: ')
-    idtoi = models.CharField(max_length = 50, blank = True)
+    toi = models.BooleanField(
+        verbose_name=u'Possui TOI?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
+    idtoi = models.CharField(max_length = 50, blank = True, verbose_name=u'Id do TOI')
     preenchimento_toi = models.CharField(choices=(
             ('conforme', 'conforme'),
             ('incompleto', 'incompleto'),
             ('sem assinatura', 'sem assinatura'),
             ('outros', 'outros'),
         ),
-        max_length=20
+        max_length=20, verbose_name=u'Preenchimento do TOI?'
     )
-    
     integridade_lacre = models.CharField(choices=(
             ('conforme', 'conforme'),
             ('ausente', 'ausente'),
@@ -205,33 +223,91 @@ class VerificacaoRequisitosAdm(models.Model):
             ('ponto ligacao rompido', 'ponto ligacao rompido'),
             ('outros', 'outros'),
         ),
-        max_length=20
+        max_length=20, verbose_name=u'Integridade do Lacre'
     )
     #image_lacre = models.ImageField(upload_to = 'imagens/verificacao/lacre/', blank = True)
     #image_medidor = models.ImageField(upload_to = 'imagens/verificacao/medidor/', blank = True)
+    inspecao_visual = models.BooleanField(
+        verbose_name=u'Foi Realizado inspeção visual?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
+    dado_placa = models.BooleanField(
+        verbose_name=u'Dados da Placa está conforme?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
+    dimensao_medidor = models.BooleanField(
+        verbose_name=u'Dimensão do medidor está conforme',
+        default=True,
+        choices=STATE_CHOICES,
+    )
+    plano_selagem = models.BooleanField(
+        verbose_name=u'Plano Selagem está conforme?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
+    obs_inspecao_visual = models.CharField(max_length = 100, blank = True, verbose_name=u'Observações da Inspeção Visual?')
     
-    inspecao_visual = models.BooleanField('realizado? ')
-    dado_placa = models.BooleanField('esta conforme? ')
-    dimensao_medidor = models.BooleanField('esta conforme? ')
-    plano_selagem = models.BooleanField('esta conforme? ')
-    obs_inspecao_visual = models.CharField(max_length = 50, blank = True)
+    class Meta:
+        ordering = ['id_req_adm']
+        verbose_name = 'requisito_administrativo'
+        verbose_name_plural = 'requisitos_administrativos'
+        
+    def __str__(self):
+        return force_text(self.id_req_adm)
+    
     
 class VerificacaoRequisitosTecnicos(models.Model):
-    numero_do_processo = models.OneToOneField(VerificacaoCadAdm, primary_key=True)
-    ensaio_marcha_vazio = models.BooleanField('realizado? ')
-    resultado_ensaio_marcha_vazio = models.BooleanField('esta conforme? ')
+    id_req_tec = models.AutoField(primary_key=True)
+    req_adm = models.OneToOneField(VerificacaoRequisitosAdm, verbose_name=u'Código do requisito administrativo',)
+    ensaio_marcha_vazio =  models.BooleanField(
+        verbose_name=u'Ensaio Marcha Vazio realizado?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
+    resultado_ensaio_marcha_vazio =  models.BooleanField(
+        verbose_name=u'Resultado ensaio Marcha Vazio está conforme?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
     obs_ensaio_marcha_vazio = models.CharField(max_length = 50, blank = True)
     
-    ensaio_mostrador = models.BooleanField('realizado? ')
-    resultado_ensaio_mostrador = models.BooleanField('esta conforme? ')
+    ensaio_mostrador =  models.BooleanField(
+        verbose_name=u'Ensaio de mostrador realizado?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
+    resultado_ensaio_mostrador =  models.BooleanField(
+        verbose_name=u'Ensaio de Mostrador está conforme?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
     obs_ensaio_mostrador = models.CharField(max_length = 50, blank = True)
     
-    ensaio_exatidao = models.BooleanField('realizado? ')
-    resultado_ensaio_ensaio = models.BooleanField('esta conforme? ')
+    ensaio_exatidao =  models.BooleanField(
+        verbose_name=u'Ensaio de Exatidão está realizado?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
+    resultado_ensaio_ensaio =  models.BooleanField(
+        verbose_name=u'Ensaio de Exatidão está conforme?',
+        default=True,
+        choices=STATE_CHOICES,
+    )
     obs_ensaio_exatidao = models.CharField(max_length = 50, blank = True)
     
+    class Meta:
+        ordering = ['id_req_tec']
+        verbose_name = 'requisito_tecnico'
+        verbose_name_plural = 'requisitos_tecnicos'
+        
+    def __str__(self):
+        return force_text(self.id_req_tec)
+
 class VerificacaoRequisitosMetrologicos(models.Model):
-    numero_do_processo = models.OneToOneField(VerificacaoCadAdm, primary_key=True)
+    id_req_met = models.AutoField(primary_key=True)
+    req_tec = models.OneToOneField(VerificacaoRequisitosTecnicos, verbose_name=u'Código do requisito técnico',)
     energia_ativa_tensao = models.CharField(max_length = 10, blank = True)
     energia_ativa_corrente = models.CharField(max_length = 10, blank = True)
     energia_ativa_cos = models.CharField(max_length = 10, blank = True)
@@ -247,19 +323,38 @@ class VerificacaoRequisitosMetrologicos(models.Model):
     
     
     class Meta:
-        ordering = ['numero_do_processo']
-        verbose_name = 'verificacao'
-        verbose_name_plural = 'verificacoes'
+        ordering = ['id_req_met']
+        verbose_name = 'requisito_metrologico'
+        verbose_name_plural = 'requisitos_metrologicos'
     
     def __str__(self):
-        return self.numero_do_processo
+        return force_text(self.id_req_met)
     
     #def contar_verificacao(self):
         #return self.pericia.count()
     
     #def detalhe_pericia(self):
         #return u"/pericias/%i" % self.id
+        
+class Verificacao(models.Model):
+    id_verificacao = models.AutoField(primary_key=True)
+    cad_administrativo = models.ForeignKey(VerificacaoCadAdm)
+    cad_medidor = models.ForeignKey(VerificacaoCadMedidor)
+    cad_req_adm = models.ForeignKey(VerificacaoRequisitosAdm)
+    cad_req_tec = models.ForeignKey(VerificacaoRequisitosTecnicos)
+    cad_req_met = models.ForeignKey(VerificacaoRequisitosMetrologicos)
     
+    
+    class Meta:
+        ordering = ['id_verificacao']
+        verbose_name = 'verificacao_voluntaria'
+        verbose_name_plural = 'verificacoes_voluntarias'
+    
+    def __str__(self):
+        return force_text(self.id_verificacao)        
+        
+        
+# ----------------------------- PERÍCIA -----------------------------------    
 class Pericia(models.Model):
     verificacao = models.ForeignKey(VerificacaoCadAdm)
     #image_pericia = models.ImageField(upload_to = 'imagens/pericia/medidor/', blank = True)

@@ -18,30 +18,22 @@
 	
     <table  class="table table-striped">
 	<tr>
-		<th>Numero da verifica&ccedil;&atilde;o</th>
-		<th>data da Verifica&ccedil;&atilde;o</th>
-		<th>Data de recebimento (TOI)</th>
-		<th>Local</th>
-		<th>Temperatura</th>
-		<th>Usu&aacute;rio</th>
-		<th>Propriet&aacute;rio</th>
-		<th>Requerente</th>
-		<th>Tecnico</th>
-		<th>Equipamentos Utilizados</th>
+		<th>Verificacao</th>
+		<th>Dados Administrativos</th>
+		<th>Dados do Medidor</th>
+		<th>Requisitos Administrativos</th>
+		<th>Requisitos Tecnicos</th>
+		<th>Requisitos Metrologicos</th>
 		<th>Atualizar</th>
 	</tr>
 {% for nome in object_list %}
     <tr>
-        <td>{{ nome.processo }}</td>
-        <td>{{ nome.data_verificacao }}</td>  
-        <td>{{ nome.data_toi }} </td>
-        <td>{{ nome.local }}</td>
-        <td>{{ nome.temperatura_ambiente }}</td>
-        <td>{{ nome.usuario }}</td>
-        <td>{{ nome.proprietario }} </td>
-        <td>{{ nome.requerente }}</td>
-        <td>{{ nome.tecnico_verificacao }}</td>
-        <td>{{ nome.equipamentos_utilizados }}</td>
+        <td>{{ nome.id_verificacao }}</td>
+        <td><a href="/verificacoes/{{ nome.cad_administrativo }}">{{ nome.cad_administrativo }}</a></td>
+        <td>{{ nome.cad_medidor }}</td>
+        <td>{{ nome.cad_req_adm }}</td> 
+        <td>{{ nome.cad_req_tec }}</td>
+        <td>{{ nome.cad_req_met }}</td>   
         <td align="center"><a href="/verificacoes/{{ nome.id }}"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a></td>
     </tr>
 {% empty %}
